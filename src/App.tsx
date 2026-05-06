@@ -453,8 +453,8 @@ export default function App() {
         <Route path="/choosestyle" element={<ChooseStyle />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/boothpolaroid" element={<BoothPolaroid />} />
-        <Route path="/boothstrip" element={<BoothStrip />} />
+        <Route path="/booth/polaroid" element={<BoothPolaroid />} />
+        <Route path="/booth/strip" element={<BoothStrip />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
     </BrowserRouter>
