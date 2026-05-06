@@ -452,7 +452,7 @@ export default function App() {
         <Route path="/photobooth" element={<ChooseStyle />} />
         <Route path="/choosestyle" element={<ChooseStyle />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/boothpolaroid" element={<BoothPolaroid />} />
         <Route path="/boothstrip" element={<BoothStrip />} />
         <Route path="*" element={<HomePage />} />
