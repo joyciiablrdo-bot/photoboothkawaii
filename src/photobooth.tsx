@@ -1,0 +1,755 @@
+import { useEffect, useRef } from "react";
+
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap');
+
+  :root {
+    --pink: #ff85a1;
+    --pink-light: #ffb3c6;
+    --pink-dark: #e05c7a;
+    --pink-pale: #ffe0eb;
+    --lavender: #d4b8e0;
+    --sky: #ffd6e7;
+    --cream: #fff5f8;
+    --brown: #5c3d2e;
+    --green: #a8d5a2;
+    --green-dark: #7ab870;
+    --yellow: #ffe083;
+    --purple-soft: #c4a8e0;
+    --white: #ffffff;
+    --text-dark: #3d1f2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='6' fill='%23ff85a1' opacity='0.8'/%3E%3C/svg%3E"), auto;
+  }
+
+  nav {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 60px;
+    padding: 14px 36px;
+    display: flex; align-items: center; gap: 40px;
+    box-shadow: 0 4px 30px rgba(255,133,161,0.25);
+    z-index: 999;
+    border: 2px solid rgba(255,180,200,0.4);
+    white-space: nowrap;
+  }
+  .nav-logo {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+  .nav-logo span:first-child { color: var(--brown); display: block; font-size: 0.78rem; font-weight: 700; }
+  .nav-logo span:last-child { color: var(--pink); font-size: 1.2rem; }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    text-decoration: none; font-weight: 700; font-size: 0.88rem;
+    color: var(--text-dark); transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--pink); }
+  .nav-links a.active { border-bottom: 2px solid var(--pink); padding-bottom: 2px; }
+  .nav-bow { font-size: 1.4rem; animation: bow-wiggle 2s ease-in-out infinite; }
+  @keyframes bow-wiggle { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+    padding-top: 100px;
+  }
+
+  .sky-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(170deg,
+      #ffc8de 0%, #ffaecf 20%, #ffd1e8 40%, #f5c8e8 60%, #e8d0f5 80%, #d4c8f0 100%);
+    z-index: 0;
+  }
+
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50px;
+    filter: blur(2px);
+    animation: cloud-float linear infinite;
+  }
+  .cloud::before,.cloud::after {
+    content:''; position:absolute;
+    background: rgba(255,255,255,0.9); border-radius: 50%;
+  }
+  .cloud-1 { width:120px;height:40px;top:8%;left:-140px;animation-duration:28s; }
+  .cloud-1::before { width:60px;height:60px;top:-30px;left:20px; }
+  .cloud-1::after { width:40px;height:40px;top:-20px;left:55px; }
+  .cloud-2 { width:90px;height:30px;top:15%;left:-110px;animation-duration:36s;animation-delay:-12s; }
+  .cloud-2::before { width:45px;height:45px;top:-22px;left:15px; }
+  .cloud-3 { width:150px;height:50px;top:6%;left:-180px;animation-duration:44s;animation-delay:-22s;opacity:0.7; }
+  .cloud-3::before { width:70px;height:70px;top:-35px;left:25px; }
+  .cloud-4 { width:80px;height:28px;top:22%;left:-100px;animation-duration:32s;animation-delay:-8s; }
+  @keyframes cloud-float { from{left:-200px} to{left:110vw} }
+
+  .mountains {
+    position: absolute;
+    bottom: 18%;
+    left: 0; right: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .mountains svg { width: 100%; height: 280px; display: block; }
+
+  .waterfall-scene {
+    position: absolute;
+    bottom: 16%;
+    right: 4%;
+    width: 130px;
+    z-index: 2;
+  }
+  .waterfall-flow {
+    width: 22px; height: 90px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(180,220,255,0.8) 60%, rgba(160,200,255,0.6) 100%);
+    border-radius: 10px;
+    margin: 0 auto;
+    animation: wf-shimmer 1.5s ease-in-out infinite alternate;
+    box-shadow: 0 0 12px rgba(180,220,255,0.7);
+    position: relative;
+  }
+  .waterfall-flow::after {
+    content:''; position:absolute; bottom:-14px; left:-18px;
+    width:58px; height:20px;
+    background: radial-gradient(ellipse, rgba(180,220,255,0.7) 60%, transparent 100%);
+    border-radius: 50%;
+    animation: wf-splash 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes wf-shimmer { from{opacity:0.85} to{opacity:1} }
+  @keyframes wf-splash { from{transform:scaleX(0.9)} to{transform:scaleX(1.1)} }
+
+  .ocean {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 19%;
+    z-index: 3;
+    overflow: hidden;
+  }
+  .wave {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+  }
+  .wave-1 {
+    bottom: -10px;
+    background: linear-gradient(180deg, rgba(255,182,217,0.6) 0%, rgba(255,150,200,0.75) 100%);
+    animation: wave-roll 7s linear infinite;
+    left: -50%;
+  }
+  .wave-2 {
+    bottom: -18px;
+    background: linear-gradient(180deg, rgba(255,200,230,0.5) 0%, rgba(255,130,185,0.65) 100%);
+    animation: wave-roll 10s linear infinite reverse;
+    animation-delay: -3s;
+    left: -50%;
+  }
+  .wave-3 {
+    bottom: -6px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,170,210,0.5) 100%);
+    animation: wave-roll 14s linear infinite;
+    animation-delay: -6s;
+    left: -50%;
+  }
+  @keyframes wave-roll { from{transform:translateX(0) rotate(0deg)} to{transform:translateX(50%) rotate(2deg)} }
+
+  .grass-strip {
+    position: absolute;
+    bottom: 17.5%;
+    left: 0; right: 0;
+    height: 60px;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .blade {
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    border-radius: 50% 50% 0 0;
+    transform-origin: bottom center;
+    animation: grass-sway 2.5s ease-in-out infinite alternate;
+  }
+  @keyframes grass-sway { from{transform:rotate(-8deg)} to{transform:rotate(8deg)} }
+
+  .sprinkles-layer { position:absolute;inset:0;z-index:5;pointer-events:none; }
+  .sprinkle {
+    position: absolute;
+    border-radius: 50px;
+    animation: sprinkle-float linear infinite;
+    opacity: 0.85;
+  }
+  @keyframes sprinkle-float {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0.85; }
+    50%  { opacity: 1; }
+    100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+  }
+
+  .butterfly {
+    position: absolute;
+    z-index: 6;
+    animation: butterfly-drift linear infinite;
+    pointer-events: none;
+  }
+  .butterfly svg { animation: butterfly-flap 0.6s ease-in-out infinite alternate; transform-origin: center; }
+  @keyframes butterfly-flap { from{transform:scaleX(1)} to{transform:scaleX(0.4)} }
+  @keyframes butterfly-drift {
+    0%   { transform: translate(0,0) rotate(0deg); }
+    25%  { transform: translate(40px,-30px) rotate(5deg); }
+    50%  { transform: translate(80px,10px) rotate(-5deg); }
+    75%  { transform: translate(40px,40px) rotate(3deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+  }
+
+  .kawaii-float {
+    position: absolute; z-index: 6;
+    font-size: 2.4rem;
+    animation: kawaii-bob 3s ease-in-out infinite alternate;
+    filter: drop-shadow(0 4px 8px rgba(255,133,161,0.3));
+    user-select: none;
+  }
+  @keyframes kawaii-bob { from{transform:translateY(0) rotate(-5deg)} to{transform:translateY(-18px) rotate(5deg)} }
+
+  .hero-content {
+    position: relative; z-index: 7;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 18px;
+    margin-top: -40px;
+  }
+  .hero-title { line-height: 1; }
+  .hero-title .photobooth-word {
+    display: block;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.8rem,7vw,5.5rem);
+    color: var(--brown);
+    letter-spacing: -1px;
+    text-shadow: 3px 3px 0 rgba(255,255,255,0.6);
+  }
+  .hero-title .kawaii-word {
+    display: block;
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(4rem,10vw,8rem);
+    background: linear-gradient(135deg, #ff85a1 0%, #ff4d7d 40%, #ff85a1 70%, #ffb3c6 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    filter: drop-shadow(2px 4px 0px rgba(255,77,125,0.3));
+    animation: kawaii-pulse 3s ease-in-out infinite;
+  }
+  @keyframes kawaii-pulse { 0%,100%{filter:drop-shadow(2px 4px 0px rgba(255,77,125,0.3))} 50%{filter:drop-shadow(2px 4px 16px rgba(255,77,125,0.6))} }
+
+  .title-badge {
+    background: white;
+    border: 2.5px solid var(--pink-light);
+    border-radius: 30px;
+    padding: 6px 28px;
+    display: inline-block;
+  }
+  .title-badge p {
+    font-size: 1.05rem; font-weight: 700;
+    color: var(--pink);
+    letter-spacing: 1px;
+  }
+  .title-badge p::before,.title-badge p::after { content: ' ♡ '; }
+
+  .camera-btn {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff85a1 0%, #ff4d7d 60%, #e03060 100%);
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(255,77,125,0.45), inset 0 2px 6px rgba(255,255,255,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    animation: btn-pulse 2.5s ease-in-out infinite;
+  }
+  .camera-btn:hover { transform: scale(1.1); box-shadow: 0 12px 40px rgba(255,77,125,0.6); }
+  .camera-btn::after {
+    content:''; position:absolute;
+    inset:-8px; border-radius:50%;
+    border: 2px dashed rgba(255,133,161,0.6);
+    animation: btn-spin 8s linear infinite;
+  }
+  @keyframes btn-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes btn-pulse { 0%,100%{box-shadow:0 8px 32px rgba(255,77,125,0.45)} 50%{box-shadow:0 8px 48px rgba(255,77,125,0.7)} }
+  .camera-icon { font-size: 2.8rem; }
+
+  .start-label {
+    font-size: 0.95rem; font-weight: 800;
+    color: var(--pink-dark);
+    letter-spacing: 2px;
+  }
+  .start-label::before,.start-label::after { content: ' ✦ '; }
+
+  #poses {
+    position: relative;
+    padding: 100px 40px 80px;
+    background: linear-gradient(180deg, #fff5f8 0%, #ffe8f2 50%, #fff0f5 100%);
+    z-index: 10;
+  }
+  #poses::before {
+    content:'';
+    position:absolute; top:-40px; left:0; right:0; height:80px;
+    background: linear-gradient(180deg, transparent, #fff5f8);
+    z-index:1;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative; z-index:2;
+  }
+  .section-tag {
+    display: inline-block;
+    background: var(--pink);
+    color: white;
+    font-weight: 800; font-size: 0.75rem;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 6px 18px; border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem,5vw,3.2rem);
+    color: var(--brown);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .section-title span { color: var(--pink); }
+  .section-sub {
+    font-size: 1.05rem; color: #9b6b7a; font-weight: 600; max-width: 560px; margin: 0 auto;
+  }
+
+  .poses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative; z-index:2;
+  }
+  .pose-card {
+    background: white;
+    border-radius: 28px;
+    padding: 36px 28px 30px;
+    border: 2px solid rgba(255,180,200,0.3);
+    box-shadow: 0 6px 30px rgba(255,133,161,0.12);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pose-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:5px;
+    border-radius: 28px 28px 0 0;
+  }
+  .pose-card:nth-child(1)::before { background: linear-gradient(90deg, #ff85a1, #ffb3c6); }
+  .pose-card:nth-child(2)::before { background: linear-gradient(90deg, #c4a8e0, #d4b8e0); }
+  .pose-card:nth-child(3)::before { background: linear-gradient(90deg, #ffe083, #ffc080); }
+  .pose-card:nth-child(4)::before { background: linear-gradient(90deg, #a8d5a2, #7ab870); }
+  .pose-card:nth-child(5)::before { background: linear-gradient(90deg, #ff85a1, #c4a8e0); }
+  .pose-card:nth-child(6)::before { background: linear-gradient(90deg, #ffb3c6, #ffe083); }
+  .pose-card:hover { transform: translateY(-8px); box-shadow: 0 18px 50px rgba(255,133,161,0.22); }
+  .pose-emoji { font-size: 3rem; margin-bottom: 14px; display: block; }
+  .pose-name {
+    font-weight: 900; font-size: 1.2rem; color: var(--brown);
+    margin-bottom: 10px;
+  }
+  .pose-desc { font-size: 0.93rem; color: #8a6070; line-height: 1.65; font-weight: 600; }
+
+  .why-strip {
+    background: linear-gradient(135deg, #ff85a1 0%, #ff4d7d 50%, #d4349a 100%);
+    border-radius: 30px;
+    padding: 60px 48px;
+    max-width: 1100px;
+    margin: 70px auto 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    box-shadow: 0 20px 60px rgba(255,77,125,0.35);
+    position: relative; z-index:2;
+    overflow: hidden;
+  }
+  .why-strip::before {
+    content:'♡ ✦ ♡ ✦ ♡ ✦ ♡ ✦ ♡ ✦ ♡';
+    position:absolute; top:14px; right:24px;
+    font-size:0.75rem; color:rgba(255,255,255,0.3);
+    letter-spacing:3px;
+  }
+  .why-text h2 {
+    font-weight: 900; font-size: clamp(1.8rem,4vw,2.8rem);
+    color: white; line-height: 1.2; margin-bottom: 16px;
+  }
+  .why-text p {
+    color: rgba(255,255,255,0.88); font-size: 1rem;
+    line-height: 1.7; font-weight: 600;
+  }
+  .why-features { display: flex; flex-direction: column; gap: 18px; }
+  .why-feat {
+    background: rgba(255,255,255,0.15);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: flex-start; gap: 14px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .why-feat-icon { font-size: 1.6rem; flex-shrink:0; }
+  .why-feat-text strong { display:block; color:white; font-weight:800; font-size:0.95rem; margin-bottom:3px; }
+  .why-feat-text span { color:rgba(255,255,255,0.8); font-size:0.87rem; font-weight:600; }
+
+  footer {
+    background: white;
+    border-top: 2px solid rgba(255,180,200,0.3);
+    padding: 40px 48px 30px;
+    display: flex; flex-wrap: wrap;
+    justify-content: space-between; align-items: center;
+    gap: 24px;
+  }
+  .footer-logo { font-weight: 900; }
+  .footer-logo span:first-child { color: var(--brown); font-size: 0.9rem; display:block; }
+  .footer-logo .big { color: var(--pink); font-size: 1.3rem; font-family:'Pacifico',cursive; }
+  .footer-logo small { color: #b08090; font-size:0.82rem; font-weight:600; display:block; margin-top:2px; }
+  .footer-socials { display: flex; gap: 14px; }
+  .soc-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink-pale), var(--pink-light));
+    border: 2px solid rgba(255,133,161,0.4);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: var(--pink-dark);
+  }
+  .soc-btn:hover { transform:scale(1.15); box-shadow:0 4px 16px rgba(255,133,161,0.4); }
+  .footer-copy { color: #b08090; font-size: 0.82rem; font-weight: 600; }
+
+  .sparkle { position:absolute; z-index:6; pointer-events:none; animation: sparkle-twinkle 2s ease-in-out infinite; }
+  @keyframes sparkle-twinkle { 0%,100%{opacity:0;transform:scale(0.5)} 50%{opacity:1;transform:scale(1)} }
+`;
+
+type GrassBlade = {
+  left: string;
+  height: number;
+  background: string;
+  rotate: number;
+  animDelay: number;
+  animDuration: number;
+  opacity: number;
+};
+
+type Sprinkle = {
+  left: string;
+  top: string;
+  width: number;
+  height: number;
+  background: string;
+  rotate: number;
+  animDuration: number;
+  animDelay: number;
+};
+
+type Butterfly = {
+  left: string;
+  top: string;
+  animDuration: number;
+  animDelay: number;
+  colors: [string, string];
+};
+
+function generateGrass(): GrassBlade[] {
+  const greens = ["#a8d5a2", "#7ab870", "#c8e6c2", "#90c080", "#b5d9ae"];
+  return Array.from({ length: 80 }, (_, i) => ({
+    left: `${(i / 80) * 100}%`,
+    height: 20 + Math.random() * 35,
+    background: greens[Math.floor(Math.random() * greens.length)],
+    rotate: (Math.random() - 0.5) * 20,
+    animDelay: Math.random() * 2,
+    animDuration: 1.8 + Math.random() * 1.5,
+    opacity: 0.7 + Math.random() * 0.3,
+  }));
+}
+
+function generateSprinkles(): Sprinkle[] {
+  const colors = ["#ff85a1", "#ffb3c6", "#c4a8e0", "#ffe083", "#a8d5a2", "#ffc0cb", "#d4b8e0", "#ff7eb3"];
+  return Array.from({ length: 45 }, () => ({
+    left: `${Math.random() * 95}%`,
+    top: `${20 + Math.random() * 60}%`,
+    width: 6 + Math.random() * 8,
+    height: 2 + Math.random() * 3,
+    background: colors[Math.floor(Math.random() * colors.length)],
+    rotate: Math.random() * 180,
+    animDuration: 3 + Math.random() * 5,
+    animDelay: Math.random() * 4,
+  }));
+}
+
+function generateButterflies(): Butterfly[] {
+  const bfColors: [string, string][] = [
+    ["#ffb3c6", "#ff85a1"],
+    ["#c4a8e0", "#9b7fce"],
+    ["#ffe083", "#ffc040"],
+    ["#a8d5a2", "#7ab870"],
+  ];
+  return Array.from({ length: 7 }, (_, i) => ({
+    left: `${5 + Math.random() * 80}%`,
+    top: `${10 + Math.random() * 60}%`,
+    animDuration: 6 + Math.random() * 8,
+    animDelay: Math.random() * 5,
+    colors: bfColors[i % bfColors.length],
+  }));
+}
+
+const grassBlades = generateGrass();
+const sprinkles = generateSprinkles();
+const butterflies = generateButterflies();
+
+export default function PhotoboothKawaii() {
+  const grassRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Inject styles
+    const styleEl = document.createElement("style");
+    styleEl.textContent = styles;
+    document.head.appendChild(styleEl);
+    return () => {
+      document.head.removeChild(styleEl);
+    };
+  }, []);
+
+  return (
+    <>
+      {/* NAV */}
+      <nav>
+        <a href="#" className="nav-logo">
+          <span>photobooth</span>
+          <span>kawaii</span>
+        </a>
+        <ul className="nav-links">
+          <li><a href="#" className="active">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Photobooth</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+        <span className="nav-bow">🎀</span>
+      </nav>
+
+      {/* HERO */}
+      <section id="hero">
+        <div className="sky-bg" />
+
+        {/* Clouds */}
+        <div className="cloud cloud-1" />
+        <div className="cloud cloud-2" />
+        <div className="cloud cloud-3" />
+        <div className="cloud cloud-4" />
+
+        {/* Mountains SVG */}
+        <div className="mountains">
+          <svg viewBox="0 0 1440 280" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,280 0,160 180,60 360,140 540,40 720,120 900,30 1080,110 1260,50 1440,130 1440,280" fill="rgba(200,160,210,0.55)" />
+            <polygon points="0,280 0,200 100,130 280,80 460,160 640,90 820,170 1000,80 1200,150 1440,100 1440,280" fill="rgba(210,170,220,0.65)" />
+            <polygon points="0,280 0,240 120,170 320,110 520,200 700,130 880,210 1060,140 1280,200 1440,160 1440,280" fill="rgba(220,175,215,0.8)" />
+            <polygon points="180,60 155,90 205,90" fill="rgba(255,255,255,0.8)" />
+            <polygon points="540,40 515,75 565,75" fill="rgba(255,255,255,0.8)" />
+            <polygon points="900,30 875,65 925,65" fill="rgba(255,255,255,0.8)" />
+            <polygon points="1260,50 1235,80 1285,80" fill="rgba(255,255,255,0.8)" />
+          </svg>
+        </div>
+
+        {/* Waterfall scene */}
+        <div className="waterfall-scene" style={{ bottom: "19%", right: "8%" }}>
+          <div className="waterfall-flow" />
+        </div>
+
+        {/* Ocean waves */}
+        <div className="ocean">
+          <div className="wave wave-1" />
+          <div className="wave wave-2" />
+          <div className="wave wave-3" />
+        </div>
+
+        {/* Grass strip */}
+        <div className="grass-strip" ref={grassRef}>
+          {grassBlades.map((blade, i) => (
+            <div
+              key={i}
+              className="blade"
+              style={{
+                left: blade.left,
+                height: `${blade.height}px`,
+                background: blade.background,
+                transform: `rotate(${blade.rotate}deg)`,
+                animationDelay: `${blade.animDelay}s`,
+                animationDuration: `${blade.animDuration}s`,
+                opacity: blade.opacity,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Sprinkles */}
+        <div className="sprinkles-layer">
+          {sprinkles.map((s, i) => (
+            <div
+              key={i}
+              className="sprinkle"
+              style={{
+                left: s.left,
+                top: s.top,
+                width: `${s.width}px`,
+                height: `${s.height}px`,
+                background: s.background,
+                transform: `rotate(${s.rotate}deg)`,
+                animationDuration: `${s.animDuration}s`,
+                animationDelay: `${s.animDelay}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Butterflies */}
+        <div>
+          {butterflies.map((bf, i) => (
+            <div
+              key={i}
+              className="butterfly"
+              style={{
+                left: bf.left,
+                top: bf.top,
+                animationDuration: `${bf.animDuration}s`,
+                animationDelay: `${bf.animDelay}s`,
+              }}
+            >
+              <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="8" cy="9" rx="8" ry="7" fill={bf.colors[0]} opacity="0.85" />
+                <ellipse cx="24" cy="9" rx="8" ry="7" fill={bf.colors[0]} opacity="0.85" />
+                <ellipse cx="9" cy="15" rx="6" ry="5" fill={bf.colors[1]} opacity="0.7" />
+                <ellipse cx="23" cy="15" rx="6" ry="5" fill={bf.colors[1]} opacity="0.7" />
+                <line x1="16" y1="2" x2="16" y2="20" stroke="#5c3d2e" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M14 2 Q12 0 11 1" stroke="#5c3d2e" strokeWidth="1" fill="none" strokeLinecap="round" />
+                <path d="M18 2 Q20 0 21 1" stroke="#5c3d2e" strokeWidth="1" fill="none" strokeLinecap="round" />
+              </svg>
+            </div>
+          ))}
+        </div>
+
+        {/* Kawaii floaters */}
+        <div className="kawaii-float" style={{ top: "22%", left: "6%", animationDelay: "0s" }}>☁️</div>
+        <div className="kawaii-float" style={{ top: "55%", left: "3%", animationDelay: "0.8s", fontSize: "2rem" }}>🌸</div>
+        <div className="kawaii-float" style={{ top: "30%", left: "12%", animationDelay: "1.5s", fontSize: "1.6rem" }}>🍓</div>
+        <div className="kawaii-float" style={{ top: "20%", right: "7%", animationDelay: "0.4s" }}>⭐</div>
+        <div className="kawaii-float" style={{ top: "45%", right: "4%", animationDelay: "1.2s", fontSize: "2rem" }}>🐻</div>
+        <div className="kawaii-float" style={{ top: "65%", right: "9%", animationDelay: "0.6s", fontSize: "1.8rem" }}>💕</div>
+        <div className="kawaii-float" style={{ top: "70%", left: "8%", animationDelay: "2s", fontSize: "1.6rem" }}>💜</div>
+        <div className="kawaii-float" style={{ top: "15%", left: "42%", animationDelay: "0.3s", fontSize: "1.4rem" }}>✨</div>
+
+        {/* Sparkles */}
+        <div className="sparkle" style={{ top: "28%", left: "25%", animationDelay: "0s" }}>✦</div>
+        <div className="sparkle" style={{ top: "40%", right: "22%", animationDelay: "0.7s" }}>✦</div>
+        <div className="sparkle" style={{ top: "60%", left: "32%", animationDelay: "1.4s" }}>✦</div>
+        <div className="sparkle" style={{ top: "18%", right: "35%", animationDelay: "0.3s", fontSize: "0.8rem" }}>✦</div>
+
+        {/* Hero content */}
+        <div className="hero-content">
+          <div className="hero-title">
+            <span className="photobooth-word">photobooth</span>
+            <span className="kawaii-word">kawaii</span>
+          </div>
+          <div className="title-badge"><p>cute moments, forever</p></div>
+          <button className="camera-btn" onClick={() => alert("📸 Strike your best pose!")}>
+            <span className="camera-icon">📷</span>
+          </button>
+          <p className="start-label">click to start!</p>
+        </div>
+      </section>
+
+      {/* POSES SECTION */}
+      <section id="poses">
+        <div className="section-header">
+          <div className="section-tag">✨ Pose Guide</div>
+          <h2 className="section-title">Strike Your Best <span>Kawaii Pose!</span></h2>
+          <p className="section-sub">Not sure how to pose? We've got you covered with our cutest, most flattering ideas!</p>
+        </div>
+
+        <div className="poses-grid">
+          {[
+            { emoji: "🤞✨", name: "The Lucky Cross", desc: "Cross your fingers and wink at the camera! It's cute, playful, and gives off main character energy. Perfect for your solo glow-up shot — ideal when you want to look effortlessly confident and fun!" },
+            { emoji: "😄🙌", name: "The Big Cheer", desc: "Throw your hands up, flash a huge grin and lean into the frame! This high-energy pose is contagious joy in photo form. Group shots come ALIVE with this one — it shows your happiest, most genuine self!" },
+            { emoji: "🦋🌀", name: "Spin & Snap", desc: "Mid-twirl is pure magic! Spin just before the shutter clicks and let your hair or outfit swirl. The motion adds life and dimension to your photo — you'll look like you just stepped out of a music video!" },
+            { emoji: "🎀👯", name: "BFF Stack", desc: "Stand close, lean into each other, and match your expressions! Squish together, make funny faces or strike matching poses. The best friendship memories are the silly ones — these shots become forever treasures!" },
+          ].map((pose) => (
+            <div key={pose.name} className="pose-card">
+              <span className="pose-emoji">{pose.emoji}</span>
+              <h3 className="pose-name">{pose.name}</h3>
+              <p className="pose-desc">{pose.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Why use us strip */}
+        <div className="why-strip">
+          <div className="why-text">
+            <h2>Why Photobooth<br />Kawaii? 🎀</h2>
+            <p>We aren't just a photobooth — we're a memory-making experience wrapped in the cutest, most magical aesthetic you've ever seen. Every click creates a keepsake you'll cherish forever. Here's why you'll fall in love with us!</p>
+          </div>
+          <div className="why-features">
+            {[
+              { icon: "🖼️", title: "100+ Kawaii Frames", desc: "From cherry blossoms to sparkly borders — there's a perfect frame for every mood and moment." },
+              { icon: "⚡", title: "Instant Downloads", desc: "Your photos are ready the second you click — no waiting, no apps, no fuss. Just pure kawaii magic!" },
+              { icon: "🌈", title: "Dreamy Filters & FX", desc: "AI-powered filters that make every complexion glow and every background pop with pastel perfection." },
+              { icon: "💌", title: "Share in One Tap", desc: "Send your strips directly to Instagram, TikTok, or as a cute digital sticker to your besties!" },
+            ].map((feat) => (
+              <div key={feat.title} className="why-feat">
+                <span className="why-feat-icon">{feat.icon}</span>
+                <div className="why-feat-text">
+                  <strong>{feat.title}</strong>
+                  <span>{feat.desc}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer>
+        <div className="footer-logo">
+          <span>photobooth</span>
+          <span className="big">kawaii</span>
+          <small>♡ cute moments, forever ♡</small>
+        </div>
+        <div className="footer-socials">
+          <a href="https://facebook.com/photoboothkawaii.online" target="_blank" rel="noreferrer" className="soc-btn" title="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
+          </a>
+          <a href="https://x.com/photoboothkawaii.online" target="_blank" rel="noreferrer" className="soc-btn" title="X (Twitter)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+          </a>
+          <a href="https://instagram.com/photoboothkawaii.online" target="_blank" rel="noreferrer" className="soc-btn" title="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>
+          </a>
+          <a href="https://youtube.com/@photoboothkawaii.online" target="_blank" rel="noreferrer" className="soc-btn" title="YouTube">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" /><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white" /></svg>
+          </a>
+        </div>
+        <p className="footer-copy">© 2024 Photobooth Kawaii. All rights reserved. ♡</p>
+      </footer>
+    </>
+  );
+}

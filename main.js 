@@ -1,0 +1,29 @@
+// ===== MAIN JS =====
+
+// Toggle mobile menu
+function toggleMenu() {
+  const menu = document.getElementById('navMenu');
+  if (menu) menu.classList.toggle('open');
+}
+
+// Set active nav link based on current page
+function setActiveNav() {
+  const page = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === page) link.classList.add('active');
+  });
+}
+
+// Load header + footer, then set active nav
+function loadPartials() {
+  const hp = document.getElementById('header-placeholder');
+  const fp = document.getElementById('footer-placeholder');
+
+  const hFetch = hp ? fetch('header.html').then(r=>r.text()).then(h=>{ hp.innerHTML=h; setActiveNav(); }) : Promise.resolve();
+  const fFetch = fp ? fetch('footer.html').then(r=>r.text()).then(f=>{ fp.innerHTML=f; }) : Promise.resolve();
+
+  return Promise.all([hFetch, fFetch]);
+}
+
+document.addEventListener('DOMContentLoaded', loadPartials);

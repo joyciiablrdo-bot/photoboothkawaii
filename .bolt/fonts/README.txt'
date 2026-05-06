@@ -1,0 +1,17 @@
+Fonts (you must own licenses from the designers):
+
+1) Puffberry — StuArt Foundry
+   Save as: Puffberry.woff2 (and optionally Puffberry.woff)
+   https://www.fontspring.com/fonts/stuart-foundry/puffberry (or your vendor)
+
+2) Perfect Lemonade — Keithzo
+   Save as: PerfectLemonade.woff2 (and optionally PerfectLemonade.woff)
+   Check the designer's shop / MyFonts / etc. for the exact purchase link.
+
+Place the files in this folder. The CSS in css/style.css already points to:
+  ../fonts/Puffberry.woff2
+  ../fonts/PerfectLemonade.woff2
+
+If your files use different names, rename them to match OR edit the @font-face urls in css/style.css.
+
+Until the files are added, the site uses similar free fallbacks (Fredoka One, Comic Neue) from Google Fonts in the HTML.
