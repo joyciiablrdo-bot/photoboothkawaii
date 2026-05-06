@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-do
 import { useState, useEffect, useRef } from "react";
 import About from "./about";
 import Contact from "./contact";
-import Privacy from "./privacy";
+import PrivacyPage from "./privacy";
 import ChooseStyle from "./choosestyle";
 import BoothPolaroid from "./boothpolaroid";
 import BoothStrip from "./boothstrip";
