@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Photobooth Kawaii ♡ cute moments, forever</title>
+<!-- ✅ AdSense verification snippet -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7363758299441973"
+     crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -36,7 +39,7 @@ body {
 /* ── NAV ── */
 nav {
   position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.92);
   backdrop-filter: blur(12px);
   border-radius: 60px;
   padding: 14px 36px;
@@ -45,16 +48,21 @@ nav {
   z-index: 999;
   border: 2px solid rgba(255,180,200,0.4);
   white-space: nowrap;
+  /* Allow nav to shrink on small screens */
+  max-width: calc(100vw - 24px);
 }
+
 .nav-logo {
   font-family: 'Nunito', sans-serif;
   font-weight: 900;
   font-size: 1.05rem;
   line-height: 1.2;
   text-decoration: none;
+  flex-shrink: 0;
 }
 .nav-logo span:first-child { color: var(--brown); display: block; font-size: 0.78rem; font-weight: 700; }
 .nav-logo span:last-child { color: var(--pink); font-size: 1.2rem; }
+
 .nav-links { display: flex; gap: 28px; list-style: none; }
 .nav-links a {
   text-decoration: none; font-weight: 700; font-size: 0.88rem;
@@ -62,8 +70,101 @@ nav {
 }
 .nav-links a:hover, .nav-links a.active { color: var(--pink); }
 .nav-links a.active { border-bottom: 2px solid var(--pink); padding-bottom: 2px; }
-.nav-bow { font-size: 1.4rem; animation: bow-wiggle 2s ease-in-out infinite; }
+
+.nav-bow { font-size: 1.4rem; animation: bow-wiggle 2s ease-in-out infinite; flex-shrink: 0; }
 @keyframes bow-wiggle { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+
+/* ── HAMBURGER ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: var(--pink-pale);
+  border: 2px solid rgba(255,133,161,0.4);
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.hamburger:hover { background: var(--pink-light); }
+.hamburger span {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--pink-dark);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+/* Open state */
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile menu overlay */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,245,248,0.97);
+  backdrop-filter: blur(16px);
+  z-index: 998;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--brown);
+  padding: 14px 40px;
+  border-radius: 50px;
+  transition: background 0.2s, color 0.2s;
+  width: 240px;
+  text-align: center;
+}
+.mobile-menu a:hover, .mobile-menu a.active {
+  background: var(--pink);
+  color: white;
+}
+.mobile-menu-close {
+  position: absolute;
+  top: 24px; right: 24px;
+  font-size: 2rem;
+  color: var(--pink);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  line-height: 1;
+}
+.mobile-menu-logo {
+  font-family: 'Pacifico', cursive;
+  color: var(--pink);
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* ── RESPONSIVE NAV ── */
+@media (max-width: 760px) {
+  nav {
+    top: 10px;
+    padding: 10px 18px;
+    gap: 0;
+    justify-content: space-between;
+    border-radius: 50px;
+    width: calc(100vw - 24px);
+  }
+  .nav-links { display: none; }
+  .nav-bow { display: none; }
+  .hamburger { display: flex; }
+}
 
 /* ── HERO ── */
 #hero {
@@ -262,6 +363,11 @@ nav {
 .why-feat-text strong { display:block;color:white;font-weight:800;font-size:0.95rem;margin-bottom:3px; }
 .why-feat-text span { color:rgba(255,255,255,0.8);font-size:0.87rem;font-weight:600; }
 
+@media (max-width: 680px) {
+  .why-strip { grid-template-columns: 1fr; padding: 36px 24px; }
+  #poses { padding: 80px 20px 60px; }
+}
+
 /* ── FOOTER ── */
 footer {
   background:white;border-top:2px solid rgba(255,180,200,0.3);
@@ -300,7 +406,22 @@ footer {
     <li><a href="/privacy">Privacy Policy</a></li>
   </ul>
   <span class="nav-bow">🎀</span>
+  <!-- ✅ Hamburger button (mobile only) -->
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- ✅ Mobile menu overlay -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileClose">✕</button>
+  <div class="mobile-menu-logo">kawaii ♡</div>
+  <a href="/" class="active" data-mobile-link>🏠 Home</a>
+  <a href="/about" data-mobile-link>💜 About</a>
+  <a href="/photobooth" data-mobile-link>📷 Photobooth</a>
+  <a href="/contact" data-mobile-link>💌 Contact</a>
+  <a href="/privacy" data-mobile-link>🔒 Privacy Policy</a>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -356,7 +477,6 @@ footer {
       <span class="kawaii-word">kawaii</span>
     </div>
     <div class="title-badge"><p>cute moments, forever</p></div>
-    <!-- ✅ FIXED: was choosestyle.html → now /choosestyle -->
     <a href="/choosestyle" class="camera-btn" aria-label="Start photobooth session">
       <span class="camera-icon">📷</span>
     </a>
@@ -458,7 +578,33 @@ footer {
 </footer>
 
 <script>
-// Generate grass blades
+// ── HAMBURGER MENU ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const mobileClose = document.getElementById('mobileClose');
+
+hamburger.addEventListener('click', function() {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+});
+
+mobileClose.addEventListener('click', function() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  document.body.style.overflow = '';
+});
+
+// Close menu on link click (mobile nav links)
+document.querySelectorAll('[data-mobile-link]').forEach(function(link) {
+  link.addEventListener('click', function() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// ── GRASS ──
 const grass = document.getElementById('grass');
 for (let i = 0; i < 80; i++) {
   const blade = document.createElement('div');
@@ -477,7 +623,7 @@ for (let i = 0; i < 80; i++) {
   grass.appendChild(blade);
 }
 
-// Generate sprinkles
+// ── SPRINKLES ──
 const sprinklesLayer = document.getElementById('sprinkles');
 const colors = ['#ff85a1','#ffb3c6','#c4a8e0','#ffe083','#a8d5a2','#ffc0cb','#d4b8e0','#ff7eb3'];
 for (let i = 0; i < 45; i++) {
@@ -497,7 +643,7 @@ for (let i = 0; i < 45; i++) {
   sprinklesLayer.appendChild(s);
 }
 
-// Generate butterflies
+// ── BUTTERFLIES ──
 const bfContainer = document.getElementById('butterflies');
 const bfColors = [['#ffb3c6','#ff85a1'],['#c4a8e0','#9b7fce'],['#ffe083','#ffc040'],['#a8d5a2','#7ab870']];
 for (let i = 0; i < 7; i++) {
@@ -522,7 +668,7 @@ for (let i = 0; i < 7; i++) {
   bfContainer.appendChild(bf);
 }
 
-// Intercept internal nav clicks for SPA routing (works alongside App.tsx React Router)
+// ── SPA ROUTING ──
 document.querySelectorAll('a[href^="/"]').forEach(function(link) {
   link.addEventListener('click', function(e) {
     const href = link.getAttribute('href');
